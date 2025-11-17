@@ -1,0 +1,67 @@
+<!-- Hero/Welcome Section -->
+<div class="landing-hero">
+  <div class="hero-text">
+    <h1 class="hero-title">Welcome, <span class="highlight"><%= user ? user.username : "Music Lover" %></span></h1>
+    <p class="hero-subtitle">Discover, play, and enjoy your favorite music</p>
+  </div>
+</div>
+
+<!-- Search Section -->
+<div class="landing-search">
+  <form action="/search" method="get" class="search-form">
+    <input type="text" name="q" placeholder="🔍 Search songs, artists, albums..." class="search-input-field">
+    <button type="submit" class="search-btn-field">Search</button>
+  </form>
+</div>
+
+<!-- Featured Songs -->
+<section class="landing-section">
+  <div class="section-header">
+    <h2 class="section-title">🎵 Latest Tracks</h2>
+  </div>
+  <% if(songs && songs.length > 0){ %>
+    <div class="landing-grid">
+      <% songs.slice(0, 12).forEach(song => { %>
+        <div class="landing-card song-card-landing">
+          <div class="card-image-container">
+            <img src="<%= song.thumbnail || '/images/default-cover.png' %>" alt="<%= song.title %>" class="card-image">
+            <a href="/player/<%= song._id %>" class="card-play-btn">▶</a>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title"><%= song.title %></h3>
+            <p class="card-artist"><%= song.artist %></p>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <p class="empty-msg">No songs available yet.</p>
+  <% } %>
+</section>
+
+<!-- Featured Albums -->
+<section class="landing-section">
+  <div class="section-header">
+    <h2 class="section-title">💿 Featured Albums</h2>
+  </div>
+  <% if(albums && albums.length > 0){ %>
+    <div class="landing-grid landing-grid-lg">
+      <% albums.slice(0, 8).forEach(album => { %>
+        <a href="/album/<%= album._id %>" class="landing-card album-card-landing">
+          <div class="card-image-container">
+            <% let albumCover = album.songs && album.songs.length > 0 ? album.songs[0].thumbnail : '/images/default-cover.png'; %>
+            <img src="<%= albumCover %>" alt="<%= album.name %>" class="card-image">
+            <div class="card-play-overlay">▶</div>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title"><%= album.name %></h3>
+            <p class="card-artist">by <%= album.artist %></p>
+            <p class="card-meta"><%= album.songs ? album.songs.length : 0 %> tracks</p>
+          </div>
+        </a>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <p class="empty-msg">No albums available yet.</p>
+  <% } %>
+</section>

@@ -1,0 +1,83 @@
+<div class="player-wrap">
+  <div class="player-left">
+    <img src="<%= song.thumbnail || song.cover || '/images/default-cover.png' %>" alt="cover" class="player-cover">
+    <div class="now-info">
+      <div class="now-title"><%= song.title %></div>
+      <div class="now-artist"><%= song.artist %></div>
+    </div>
+  </div>
+
+  <div class="player-center">
+    <div class="controls">
+      <div class="control-btn prev" title="Previous">⏮</div>
+      <div class="control-btn play" id="playBtn">▶</div>
+      <div class="control-btn next" title="Next">⏭</div>
+    </div>
+
+    <div class="progress">
+      <div class="time" id="currentTime">0:00</div>
+      <div class="progress-bar" id="progressBar">
+        <div class="fill" id="progressFill"></div>
+      </div>
+      <div class="time" id="duration">0:00</div>
+    </div>
+
+    <div style="margin-top:14px; text-align:center; color:var(--muted)">Use the controls above or the system audio controls below.</div>
+
+    <div style="margin-top:12px">
+      <audio id="audioPlayer" src="<%= song.file %>" preload="metadata"></audio>
+    </div>
+  </div>
+
+  <div class="player-right">
+    <div class="queue-panel">
+      <h3 style="margin:0 0 10px 0">Queue</h3>
+      <% songs.forEach((s, idx) => { %>
+        <div class="queue-item <%= s._id.toString()===song._id.toString() ? 'active' : '' %>" data-idx="<%= idx %>" data-src="<%= s.file %>">
+          <img src="<%= s.thumbnail || s.cover || '/images/default-cover.png' %>" alt="thumb">
+          <div class="meta">
+            <div class="q-title"><%= s.title %></div>
+            <div class="q-artist"><%= s.artist %></div>
+          </div>
+          <div class="q-action">▶</div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</div>
+
+<script>
+  const audio = document.getElementById('audioPlayer');
+  const playBtn = document.getElementById('playBtn');
+  const progressFill = document.getElementById('progressFill');
+  const currentTime = document.getElementById('currentTime');
+  const durationEl = document.getElementById('duration');
+
+  function fmt(s){
+    if(!isFinite(s)) return '0:00';
+    const m = Math.floor(s/60); const sec = Math.floor(s%60).toString().padStart(2,'0'); return `${m}:${sec}`;
+  }
+
+  audio.addEventListener('loadedmetadata', ()=>{
+    durationEl.textContent = fmt(audio.duration);
+  });
+  audio.addEventListener('timeupdate', ()=>{
+    const pct = (audio.currentTime / audio.duration) * 100 || 0;
+    progressFill.style.width = pct + '%';
+    currentTime.textContent = fmt(audio.currentTime);
+  });
+
+  playBtn.addEventListener('click', ()=>{
+    if(audio.paused) { audio.play(); playBtn.textContent='⏸'; } else { audio.pause(); playBtn.textContent='▶'; }
+  });
+
+  // Queue click
+  document.querySelectorAll('.queue-item').forEach(item=>{
+    item.addEventListener('click', ()=>{
+      const src = item.getAttribute('data-src');
+      audio.src = src; audio.play(); playBtn.textContent='⏸';
+      document.querySelectorAll('.queue-item').forEach(it=>it.classList.remove('active'));
+      item.classList.add('active');
+    });
+  });
+</script>

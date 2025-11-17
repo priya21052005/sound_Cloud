@@ -1,0 +1,20 @@
+<h2>Search Results for "<%= title.split(':')[1].trim() %>"</h2>
+
+<% if (songs.length > 0) { %>
+  <div class="songs">
+    <% songs.forEach(song => { %>
+      <div class="song">
+        <img src="<%= song.cover %>" alt="<%= song.title %>">
+        <p><%= song.title %></p>
+        <p><small><%= song.artist %></small></p>
+        <audio controls>
+          <source src="<%= song.file %>" type="audio/mpeg">
+        </audio>
+        <a href="/player/<%= song._id %>">▶ Play</a>
+      </div>
+    <% }) %>
+  </div>
+<% } else { %>
+  <p>No songs found.</p>
+<% } %>
+

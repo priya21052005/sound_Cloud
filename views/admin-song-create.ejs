@@ -1,0 +1,18 @@
+<h2>Add Song</h2>
+<form action="/admin/songs/create" method="POST" enctype="multipart/form-data">
+  <input type="text" name="title" placeholder="Song Title" required>
+  <input type="text" name="artist" placeholder="Artist" required>
+  <select name="albumId" required>
+    <% albums.forEach(album => { %>
+      <option value="<%= album._id %>"><%= album.name %></option>
+    <% }) %>
+  </select>
+
+  <label>Audio File:</label>
+  <input type="file" name="audio" accept="audio/*" required>
+
+  <label>Thumbnail Image:</label>
+  <input type="file" name="thumbnail" accept="image/*" required>
+
+  <button type="submit">Add Song</button>
+</form>

@@ -1,0 +1,127 @@
+<div class="admin-container">
+  <header class="admin-header">
+    <h1>Admin Panel</h1>
+    <div class="admin-actions">
+      <a class="btn primary" href="/admin/albums/create">+ Add Album</a>
+      <a class="btn" href="/admin/songs/create">+ Add Song</a>
+      <a class="btn ghost" href="/logout">Logout</a>
+    </div>
+  </header>
+
+  <main class="admin-grid">
+    <section class="panel albums-panel">
+      <h2>Albums</h2>
+      <div class="cards">
+        <% albums.forEach(album => { %>
+          <article class="card album-card">
+            <div class="card-head">
+              <div>
+                <div class="album-title"><%= album.name %></div>
+                <div class="album-artist">by <%= album.artist %></div>
+              </div>
+              <form action="/admin/albums/delete/<%= album._id %>" method="POST" onsubmit="return confirm('Delete this album and all its songs?')">
+                <button class="btn danger" type="submit">Delete</button>
+              </form>
+            </div>
+
+            <div class="album-body">
+              <details>
+                <summary>Manage songs (<%= album.songs.length %>)</summary>
+                <ul class="song-list">
+                  <% album.songs.forEach(song => { %>
+                    <li>
+                      <div class="song-meta">
+                        <span class="song-title"><%= song.title %></span>
+                        <span class="song-artist">— <%= song.artist %></span>
+                      </div>
+                      <div class="song-actions">
+                        <form action="/admin/albums/<%= album._id %>/remove/<%= song._id %>" method="POST">
+                          <button class="btn small" type="submit">Remove</button>
+                        </form>
+                        <form action="/admin/songs/delete/<%= song._id %>" method="POST">
+                          <button class="btn small danger" type="submit">Delete</button>
+                        </form>
+                      </div>
+                    </li>
+                  <% }) %>
+                </ul>
+
+                <form class="mini-form" action="/admin/albums/<%= album._id %>/add-song" method="POST" enctype="multipart/form-data">
+                  <input type="text" name="title" placeholder="Song Title" required class="input">
+                  <input type="text" name="artist" placeholder="Song Artist" required class="input">
+                  <input type="file" name="audio" accept="audio/*" required class="input-file">
+                  <input type="file" name="thumbnail" accept="image/*" required class="input-file">
+                  <button class="btn primary small" type="submit">Add Song</button>
+                </form>
+              </details>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    </section>
+
+    <aside class="panel users-panel">
+      <h2>Users</h2>
+      <div class="users-list">
+        <% users.forEach(user => { %>
+          <div class="user-row">
+            <div>
+              <div class="user-name"><%= user.username %></div>
+              <div class="user-email"><%= user.email %></div>
+            </div>
+            <div class="user-meta">Playlists: <strong><%= user.playlists.length %></strong></div>
+          </div>
+        <% }) %>
+      </div>
+
+      <h2>All Songs</h2>
+      <div class="songs-overview">
+        <a class="btn" href="/admin/songs/create">+ Add Song</a>
+        <!-- Optionally list top-level songs or stats here -->
+      </div>
+    </aside>
+  </main>
+</div>
+
+<style>
+  :root{ --bg:#0b0b0c; --panel:#0f0f10; --muted:#9b9b9b; --accent:#1DB954; --danger:#ff4d4f }
+  .admin-container{ padding:28px; font-family:Inter,Segoe UI,Arial; color:#fff; background:linear-gradient(180deg,#050505 0%, #0b0b0c 100%); min-height:calc(100vh - 20px)}
+  .admin-header{ display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:18px }
+  .admin-header h1{ margin:0; font-size:24px }
+  .admin-actions .btn{ margin-left:8px }
+
+  .admin-grid{ display:grid; grid-template-columns: 1fr 340px; gap:20px }
+  .panel{ background:var(--panel); border-radius:12px; padding:18px }
+  .albums-panel h2, .users-panel h2{ margin-top:0; margin-bottom:12px }
+
+  .cards{ display:grid; gap:12px }
+  .card{ background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.03) }
+  .card-head{ display:flex; justify-content:space-between; align-items:center }
+  .album-title{ font-weight:700; font-size:16px }
+  .album-artist{ color:var(--muted); font-size:13px }
+
+  .song-list{ list-style:none; padding:0; margin:8px 0 12px 0 }
+  .song-list li{ display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px dashed rgba(255,255,255,0.02) }
+  .song-title{ font-weight:600 }
+  .song-artist{ color:var(--muted); margin-left:6px }
+  .song-actions form{ display:inline-block; margin-left:6px }
+
+  .mini-form{ display:flex; flex-direction:column; gap:8px; margin-top:8px }
+  .mini-form .input{ padding:8px; border-radius:8px; background:#0b0b0b; border:1px solid rgba(255,255,255,0.03); color:#fff }
+  .input-file{ color:#bfbfbf }
+
+  .users-list{ display:flex; flex-direction:column; gap:10px; max-height:60vh; overflow:auto }
+  .user-row{ display:flex; justify-content:space-between; align-items:center; padding:8px; border-radius:8px; background:rgba(0,0,0,0.06) }
+  .user-name{ font-weight:700 }
+  .user-email{ color:var(--muted); font-size:13px }
+
+  /* Buttons */
+  .btn{ display:inline-block; padding:8px 12px; border-radius:8px; background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.06); text-decoration:none }
+  .btn.primary{ background:var(--accent); color:#06120a; border:none }
+  .btn.ghost{ background:transparent; border:1px dashed rgba(255,255,255,0.04) }
+  .btn.danger{ background:var(--danger); color:#2b0000; border:none }
+  .btn.small{ padding:6px 8px; font-size:13px; border-radius:6px }
+
+  /* Responsive */
+  @media (max-width:900px){ .admin-grid{ grid-template-columns: 1fr } }
+</style>

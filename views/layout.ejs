@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <!-- Google Font for a modern UI similar to Spotify -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2>Sound Cloud</h2>
+      <nav>
+        <a href="/">Home</a>
+        <% if(user){ %>
+            <a href="/playlists">My Playlists</a>
+            <h3>Albums</h3>
+            <ul>
+            <% albums.forEach(album => { %>
+                <li><a href="/album/<%= album._id %>"><%= album.name %></a></li>
+            <% }) %>
+            </ul>
+            <a href="/logout">Logout</a>
+        <% } else { %>
+          <a href="/login">Login</a>
+          <a href="/register">Register</a>
+          
+        <% } %>
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+      <%- body %> <!-- Songs and other content will go here -->
+    </main>
+  </div>
+
+  <script src="/js/script.js"></script>
+</body>
+</html>
