@@ -1,5 +1,13 @@
-import express from "express";
+
 import dotenv from "dotenv";
+dotenv.config();
+import express from "express";
+
+console.log("Loaded ENV →", {
+  USE_REDIS: process.env.USE_REDIS,
+  REDIS_URL: process.env.REDIS_URL,
+});
+
 import expressLayouts from "express-ejs-layouts";
 import mongoose from "mongoose";
 import session from "express-session";
@@ -15,7 +23,6 @@ import Album from "./models/Album.js";
 import { initRedis, isLocked, incrementAttempts, resetAttempts } from "./utils/redisLock.js";
 import { encrypt, decrypt } from "./utils/encryption.js";
 
-dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -53,6 +60,11 @@ app.use(
     cookie: { maxAge: 1000 * 60 * 60 },
   })
 );
+
+
+initRedis()
+  .then(() => console.log("Redis initialized"))
+  .catch(err => console.log("Redis init failed:", err));
 
 // MongoDB
 mongoose
@@ -472,6 +484,8 @@ app.get("/album/:id", requireLogin, async (req, res) => {
 // Start server
 // app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
 
+console.log("USE_REDIS =", process.env.USE_REDIS);
+console.log("REDIS_URL =", process.env.REDIS_URL);
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
